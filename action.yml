@@ -32,7 +32,7 @@ runs:
     shell: bash
   - name: Run script
     run: | 
-      chmod +x install.sh
+      chmod +x ./install.sh
       install.sh
     shell: bash
     env:
