@@ -1,0 +1,33 @@
+name: 'Vaunt Cards Action'
+description: 'Action to generate vaunt cards in the .vaunt/cards directory'
+author: VauntDev
+branding:
+  icon: 'rabbit'
+  color: 'orange'
+
+inputs:
+  work-dir:
+    description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
+    required: false
+  delay:
+    description: Delay between each test cases
+    required: false
+    default: 10
+  token:
+    description: GitHub Access Token
+    required: false
+    default: ${{ github.token }}
+    
+outputs:
+  passed:
+    description: Count of passed tests
+  failed:
+    description: Count of failed tests
+  skipped:
+    description: Count of skipped tests
+  time:
+    description: Test execution time [ms]
+
+runs:
+  using: 'docker'
+  main: 'Dockerfile'
