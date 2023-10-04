@@ -31,7 +31,7 @@ runs:
     run: echo "${{ github.action_path }}" >> $GITHUB_PATH
     shell: bash
   - name: Check PWD
-    run: echo ls
+    run: ls
     shell: bash
   - name: Grant permission
     run: chmod +x install.sh
