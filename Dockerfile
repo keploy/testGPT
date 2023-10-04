@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get install -y curl sudo && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mv /install.sh /app/install.sh
+COPY install.sh /app/install.sh
 
 RUN chmod +x /app/install.sh
 
