@@ -6,6 +6,9 @@ branding:
   color: 'orange'
 
 inputs:
+  workdir:
+    description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
+    required: false
   delay:
     description: Delay between each test cases
     required: false
@@ -25,7 +28,7 @@ runs:
   using: "composite"
   steps:
   - name: Setup GITHUB_PATH for script
-    run: echo "${{ GITHUB_WORKSPACE }}" >> $GITHUB_PATH
+    run: echo "${{ github.action_path }}" >> $GITHUB_PATH
     shell: bash
   - name: Grant permission
     run: chmod +x install.sh
@@ -34,5 +37,6 @@ runs:
     run:  install.sh
     shell: bash
     env:
-      ENTITY: ${{ github.repository_owner }}
+      ENTITY: ${{ github.action_path }}
+      GITHUB_WORKSPACE: ${{ inputs.workdir }}
       DELAY: ${{ inputs.delay }}
