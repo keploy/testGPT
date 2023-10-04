@@ -12,8 +12,6 @@ RUN apt-get update && \
     apt-get install -y curl sudo && \
     rm -rf /var/lib/apt/lists/*
 
-COPY install.sh /app/install.sh
+RUN chmod +x install.sh
 
-RUN chmod +x /app/install.sh
-
-ENTRYPOINT [ "/app/install.sh" ]
+ENTRYPOINT [ "install.sh" ]
