@@ -21,5 +21,5 @@ echo 'mod download'
 go build -o application
 echo 'go build -o application .'
 
-sudo -E env PATH=$PATH keploy test -c "${GITHUB_WORKSPACE}/application" --delay ${DELAY} --debug
-echo sudo -E env PATH=$PATH keploy test -c "${GITHUB_WORKSPACE}/application" --delay ${DELAY}
+sudo -E keploy test -c "${GITHUB_WORKSPACE}/application" --delay ${DELAY} --debug
+echo sudo -E keploy test -c "${GITHUB_WORKSPACE}/application" --delay ${DELAY}

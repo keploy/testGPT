@@ -15,4 +15,4 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     rm get-docker.sh
 
 
-ENTRYPOINT [ "install.sh" ]
+ENTRYPOINT [ "/app/install.sh" ]
