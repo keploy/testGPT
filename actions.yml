@@ -6,17 +6,13 @@ branding:
   color: 'orange'
 
 inputs:
-  work-dir:
+  workdir:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: false
   delay:
     description: Delay between each test cases
     required: false
     default: 10
-  token:
-    description: GitHub Access Token
-    required: false
-    default: ${{ github.token }}
     
 outputs:
   passed:
@@ -29,5 +25,16 @@ outputs:
     description: Test execution time [ms]
 
 runs:
-  using: 'docker'
-  main: 'Dockerfile'
+  using: "composite"
+    steps:
+      - name: Setup GITHUB_PATH for script
+        run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+        shell: bash
+      - name: Run script
+        run: install.sh
+        shell: bash
+        env:
+          ENTITY: ${{ github.repository_owner }}
+          REPOSITORY: ${{ env.REPOSITORY_NAME }}
+          GITHUB_WORKSPACE: ${{ inputs.workdir }}
+          DELAY: ${{ inputs.delay }}
