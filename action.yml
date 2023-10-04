@@ -31,10 +31,11 @@ runs:
     run: echo "${{ github.action_path }}" >> $GITHUB_PATH
     shell: bash
   - name: Run script
-    run: install.sh
+    run: | 
+      chmod +x install.sh
+      install.sh
     shell: bash
     env:
       ENTITY: ${{ github.repository_owner }}
-      REPOSITORY: ${{ env.REPOSITORY_NAME }}
       GITHUB_WORKSPACE: ${{ inputs.workdir }}
       DELAY: ${{ inputs.delay }}
