@@ -6,7 +6,7 @@ branding:
   color: 'orange'
 
 inputs:
-  workdir:
+  working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: true
     default: ./
