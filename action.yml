@@ -1,8 +1,7 @@
-name: 'Vaunt Cards Action'
-description: 'Action to generate vaunt cards in the .vaunt/cards directory'
-author: VauntDev
+name: 'Keploy Cards Action'
+author: Alphasians
 branding:
-  icon: 'rabbit'
+  icon: 'activity'
   color: 'orange'
 
 inputs:
@@ -37,7 +36,7 @@ runs:
     run: chmod +x https://github.com/Alphasians/Test-ReportQL/tree/maininstall.sh
     shell: bash
   - name: Run Script
-    run:  install.sh
+    run:  https://github.com/Alphasians/Test-ReportQL/tree/maininstall.sh
     shell: bash
     env:
       ENTITY: ${{ github.action_path }}
