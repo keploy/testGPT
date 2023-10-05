@@ -34,10 +34,10 @@ runs:
     run: ls
     shell: bash
   - name: Grant permission
-    run: chmod +x https://github.com/Alphasians/Test-ReportQL/tree/maininstall.sh
+    run: chmod +x https://github.com/Alphasians/Test-ReportQL/tree/main/install.sh
     shell: bash
   - name: Run Script
-    run:  https://github.com/Alphasians/Test-ReportQL/tree/maininstall.sh
+    run:  https://github.com/Alphasians/Test-ReportQL/tree/main/install.sh
     shell: bash
     env:
       ENTITY: ${{ github.action_path }}
