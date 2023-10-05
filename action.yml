@@ -1,4 +1,5 @@
 name: 'Keploy Cards Action'
+description: "A action to run e2e test run"
 author: Alphasians
 branding:
   icon: 'activity'
