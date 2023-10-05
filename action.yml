@@ -8,11 +8,11 @@ branding:
 inputs:
   working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
-    required: false
+    required: true
     default: ./
   delay:
     description: Delay between each test cases
-    required: false
+    required: true
     default: 10
     
 outputs:
