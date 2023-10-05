@@ -34,7 +34,7 @@ runs:
     run: ls
     shell: bash
   - name: Grant permission
-    run: chmod +x install.sh
+    run: chmod +x https://github.com/Alphasians/Test-ReportQL/tree/maininstall.sh
     shell: bash
   - name: Run Script
     run:  install.sh
