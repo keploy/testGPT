@@ -9,6 +9,7 @@ inputs:
   workdir:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: false
+    default: ${{ github.workspace }}
   delay:
     description: Delay between each test cases
     required: false
@@ -33,11 +34,8 @@ runs:
   - name: Check PWD
     run: ls
     shell: bash
-  - name: Grant permission
-    run: chmod +x https://github.com/Alphasians/Test-ReportQL/tree/main/install.sh
-    shell: bash
   - name: Run Script
-    run:  https://github.com/Alphasians/Test-ReportQL/tree/main/install.sh
+    run:  install.sh
     shell: bash
     env:
       ENTITY: ${{ github.action_path }}
