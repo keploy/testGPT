@@ -42,5 +42,5 @@ runs:
     shell: sh
     env:
       ENTITY: ${{ github.workspace }}
-      working-directory: ${{ inputs.workdir }}
+      working-directory: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
