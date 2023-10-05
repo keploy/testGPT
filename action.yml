@@ -6,7 +6,7 @@ branding:
   color: 'orange'
 
 inputs:
-  working-directory:
+  workdir:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: true
     default: ./
@@ -32,17 +32,8 @@ runs:
     run: echo "${{ github.action_path }}" >> $GITHUB_PATH
     shell: bash
   - name: Check PWD
-    run: |
-      echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-      cd ${{ env.REPOSITORY_NAME }}
-      ls
-    shell: sh
-  - name: Get the Working directory
-    run: |
-      echo "REPOSITORY_NAME=${inputs..working-directory}" >> $GITHUB_ENV
-      cd ${{ env.REPOSITORY_NAME }}
-      ls
-    shell: sh
+    run: ls
+    shell: bash
   - name: Grant permissions
     run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
@@ -50,7 +41,6 @@ runs:
     run:  ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
     env:
-      ENTITY: ${{ github.repository_owner }}
-      REPOSITORY: ${{ env.REPOSITORY_NAME }}
-      GITHUB_WORKSPACE: ${{ inputs.working-directory }}
+      ENTITY: ${{ github.workspace }}
+      working-directory: ${{ inputs.workdir }}
       DELAY: ${{ inputs.delay }}

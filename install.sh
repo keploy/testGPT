@@ -1,8 +1,8 @@
 # Path: install.sh
-#if ! [ -z ${GITHUB_WORKSPACE} ]; then
-#    echo "Please run this from where main.go file is present"
-#    exit 1
-#fi
+if ! [ -e .git ]; then
+    echo "Please run this from where main.go file is present"
+    exit 1
+fi
 
 # Install Keploy binary using curl command
 curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
@@ -21,5 +21,5 @@ echo 'mod download'
 go build -o application
 echo 'go build -o application .'
 
-sudo -E keploy test -c "${{ github.repository_owner }}/${{ github.repository_owner }}/tree/main/${}/application" --delay ${DELAY} --debug
-echo sudo -E keploy test -c "${GITHUB_WORKSPACE}/application" --delay ${DELAY}
+sudo -E keploy test -c "${working-directory}/application" --delay ${DELAY} --debug
+echo sudo -E keploy test -c "${working-directory}/application" --delay ${DELAY}
