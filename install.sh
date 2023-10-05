@@ -1,5 +1,6 @@
-# Path: install.sh
-if ! [ -e .git ]; then
+#!/usr/bin/env bash
+
+if ! [ -e .git/${WORKDIR} ]; then
     echo "Please run this from where main.go file is present"
     exit 1
 fi
@@ -21,5 +22,5 @@ echo 'mod download'
 go build -o application
 echo 'go build -o application .'
 
-sudo -E keploy test -c "${working-directory}/application" --delay ${DELAY} --debug
-echo sudo -E keploy test -c "${working-directory}/application" --delay ${DELAY}
+sudo -E keploy test -c "${WORKDIR}/application" --delay ${DELAY} --debug
+echo sudo -E keploy test -c "${WORKDIR}/application" --delay ${DELAY}

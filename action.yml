@@ -41,6 +41,5 @@ runs:
     run:  ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
     env:
-      ENTITY: ${{ github.workspace }}
-      working-directory: ${{ inputs.working-directory }}
+      WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
