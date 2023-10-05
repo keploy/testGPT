@@ -35,15 +35,12 @@ runs:
     run: ls
     shell: bash
   - name: Grant permissions
-    run: chmod +x install.sh
-    shell: bash
-    env:
-      ENTITY: ${{ github.action_path }}
-      GITHUB_WORKSPACE: ${{ inputs.workdir }}
+    run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
+    shell: sh
   - name: Run Script
-    run:  install.sh
-    shell: bash
+    run:  ${GITHUB_ACTION_PATH}/install.sh
+    shell: sh
     env:
-      ENTITY: ${{ github.action_path }}
+      ENTITY: ${{ github.workspace }}
       GITHUB_WORKSPACE: ${{ inputs.workdir }}
       DELAY: ${{ inputs.delay }}

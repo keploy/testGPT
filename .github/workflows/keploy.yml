@@ -1,0 +1,13 @@
+name: Keploy Cards Update
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Keploy Cards
+      uses: alphasians/test-reportql@main
