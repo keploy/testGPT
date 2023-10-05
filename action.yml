@@ -9,7 +9,7 @@ inputs:
   workdir:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: false
-    default: ${{ github.workspace }}
+    default: ./
   delay:
     description: Delay between each test cases
     required: false

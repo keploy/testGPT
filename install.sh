@@ -1,5 +1,5 @@
 # Path: install.sh
-if ! [ -e .git ]; then
+if ! [ -z ${GITHUB_WORKSPACE} ]; then
     echo "Please run this from where main.go file is present"
     exit 1
 fi
