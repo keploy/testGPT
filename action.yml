@@ -6,7 +6,7 @@ branding:
   color: 'orange'
 
 inputs:
-  workdir:
+  working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: false
     default: ./
@@ -42,5 +42,5 @@ runs:
     shell: sh
     env:
       ENTITY: ${{ github.workspace }}
-      GITHUB_WORKSPACE: ${{ inputs.workdir }}
+      GITHUB_WORKSPACE: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
