@@ -8,11 +8,11 @@ branding:
 inputs:
   working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
-    required: true
+    required: false
     default: ./
   delay:
     description: Delay between each test cases
-    required: true
+    required: false
     default: 10
     
 outputs:
@@ -29,7 +29,9 @@ runs:
   using: "composite"
   steps:
   - name: Setup GITHUB_PATH for script
-    run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+    run: |
+      echo "${{ github.action_path }}" >> $GITHUB_PATH
+      echo "${{ inputs.working-directory }}"
     shell: bash
   - name: Check PWD
     run: ls
