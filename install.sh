@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if ! [ -e .git/${WORKDIR} ]; then
+if ! [ -e ${WORKDIR} ]; then
     echo "Please run this from where main.go file is present"
     exit 1
 fi
@@ -16,11 +16,13 @@ chmod +x /usr/local/bin/keploy
 
 echo "Keploy installed successfully 🎉"
 
+cd $WORKDIR
+echo "${WORKDIR}"
 # Generate app binary
 go mod download
 echo 'mod download'
 go build -o application
 echo 'go build -o application .'
 
-sudo -E keploy test -c "${WORKDIR}/application" --delay ${DELAY} --debug
+sudo -E keploy test -c "./application" --delay ${DELAY} --debug
 echo sudo -E keploy test -c "${WORKDIR}/application" --delay ${DELAY}
