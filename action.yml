@@ -23,9 +23,6 @@ runs:
       echo "${{ github.action_path }}" >> $GITHUB_PATH
       echo "${{ inputs.working-directory }}"
     shell: bash
-  - name: Check PWD
-    run: ls
-    shell: bash
   - name: Grant permissions
     run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
