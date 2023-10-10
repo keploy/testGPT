@@ -15,11 +15,11 @@ cd ${WORKDIR}
 echo "${WORKDIR}"
 # Generate app binary
 go mod download
-echo 'mod download'
+echo 'go mod download'
 go build -o application
 echo 'go build -o application .'
 
 echo 'Test Mode Starting 🎉'
 
-pwd && sudo -E env "PATH=$PATH" keploy test -c "./application" --delay ${DELAY} --debug
-echo sudo -E env "PATH=$PATH" keploy test -c "./application" --delay ${DELAY}
+pwd && sudo -E keploy test -c "./application" --delay ${DELAY} --debug
+echo sudo -E keploy test -c "./application" --delay ${DELAY}
