@@ -9,8 +9,8 @@ chmod +x /usr/local/bin/keploy
 
 echo "Keploy installed successfully 🎉"
 
-cd ${WORKDIR}
-echo "${WORKDIR}"
+cd ${GITHUB_WORKSPACE}/${WORKDIR}
+echo "${GITHUB_WORKSPACE}/${WORKDIR}"
 # Generate app binary
 go mod download
 go build -o application
