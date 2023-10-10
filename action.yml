@@ -14,16 +14,6 @@ inputs:
     description: Delay between each test cases
     required: false
     default: 10
-    
-outputs:
-  passed:
-    description: Count of passed tests
-  failed:
-    description: Count of failed tests
-  skipped:
-    description: Count of skipped tests
-  time:
-    description: Test execution time [ms]
 
 runs:
   using: "composite"

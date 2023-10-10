@@ -19,5 +19,7 @@ echo 'mod download'
 go build -o application
 echo 'go build -o application .'
 
-sudo -E keploy test -c "./application" --delay ${DELAY} --debug
-echo sudo -E keploy test -c "./application" --delay ${DELAY}
+echo 'Test Mode Starting 🎉'
+
+pwd && sudo -E env "PATH=$PATH" keploy test -c "./application" --delay ${DELAY} --debug
+echo sudo -E env "PATH=$PATH" keploy test -c "./application" --delay ${DELAY}
