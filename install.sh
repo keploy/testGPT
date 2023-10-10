@@ -14,8 +14,9 @@ echo "${WORKDIR}"
 # Generate app binary
 go mod download
 go build -o application
-
+echo "ls"
+ls
 echo 'Test Mode Starting 🎉'
 
-pwd && sudo -E keploy test -c "./application" --delay ${DELAY} --debug
 echo sudo -E keploy test -c "./application" --delay ${DELAY}
+sudo -E keploy test -c "./application" --delay ${DELAY} --debug
