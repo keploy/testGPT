@@ -27,6 +27,6 @@ elif [[ "$COMMAND" =~ .*"node".* ]]; then
   echo "Node is present."
   npm install
   echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${{COMMAND}}" --delay ${DELAY}
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY}
   sudo -E keploy test -c "${COMMAND}" --delay ${DELAY}
 fi
