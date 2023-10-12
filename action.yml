@@ -18,7 +18,7 @@ inputs:
     required: true
   keploy-path:
     description: Path to keploy
-    required: false
+    required: true
     default: /
 
 runs:
