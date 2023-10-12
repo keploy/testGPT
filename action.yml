@@ -8,12 +8,14 @@ branding:
 inputs:
   working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
-    required: false
-    default: ./
+    required: true
   delay:
     description: Delay between each test cases
     required: false
-    default: 10
+    default: 20
+  command:
+    description: Command to run the application
+    required: true
 
 runs:
   using: "composite"
@@ -32,3 +34,4 @@ runs:
     env:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
+      COMMAND : ${{ inputs.command }}

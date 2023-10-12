@@ -12,11 +12,21 @@ echo "Keploy installed successfully 🎉"
 cd ${GITHUB_WORKSPACE}/${WORKDIR}
 echo "${GITHUB_WORKSPACE}/${WORKDIR}"
 # Generate app binary
-go mod download
-go build -o application
 echo "ls"
 ls
-echo 'Test Mode Starting 🎉'
 
-echo sudo -E keploy test -c "./application" --delay ${DELAY}
-sudo -E keploy test -c "./application" --delay ${DELAY} --debug
+if [[ "$COMMAND" =~ .*"go".* ]]; then
+  echo "go is present."
+  go mod download
+  go build -o application
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "./application" --delay ${DELAY}
+  sudo -E keploy test -c "./application" --delay ${DELAY}
+
+elif [[ "$COMMAND" =~ .*"node".* ]]; then
+  echo "Node is present."
+  npm install
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "${{COMMAND}}" --delay ${DELAY}
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY}
+fi
