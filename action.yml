@@ -1,4 +1,4 @@
-name: 'Keploy Cards Action'
+name: 'Keploy TestRun'
 description: "A action to run e2e test run"
 author: Alphasians
 branding:
@@ -16,6 +16,10 @@ inputs:
   command:
     description: Command to run the application
     required: true
+  keploy-path:
+    description: Path to keploy
+    required: false
+    default: /
 
 runs:
   using: "composite"
@@ -35,3 +39,4 @@ runs:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
+      KEPLOY_PATH: ${{inputes.keploy-path}}
