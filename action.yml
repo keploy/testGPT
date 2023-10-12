@@ -39,4 +39,4 @@ runs:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
-      KEPLOY_PATH: ${{inputes.keploy-path}}
+      KEPLOY_PATH: ${{inputs.keploy-path}}
