@@ -46,11 +46,18 @@ runs:
       echo "$(find /${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
-      echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml" >> $GITHUB_OUTPUT
-      echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-*.yml"
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yaml
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yaml >> $GITHUB_OUTPUT
+      
       echo "$(find "$@" -type f | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
+      for i in testReports.yml
+      do
+        echo "Processing $i report.yaml file..."
+        echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-i.yaml"
+        cat $i
+      done
     shell: sh
     env:
       WORKDIR: ${{ inputs.working-directory }}
