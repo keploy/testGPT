@@ -55,7 +55,7 @@ runs:
         echo "Processing ${i} report.yaml file..."
         cat "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-${i}.yaml"
       done
-    shell: sh
+    shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
