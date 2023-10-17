@@ -43,13 +43,16 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      sudo -E keploy test -c "./application" --delay ${DELAY} --path ${KEPLOY_PATH} >> ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
-      sed -i 's/no of test cases: //g' ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
+      sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH} >> ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
+      grep 'no of test cases:' ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/temp.txt
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       echo "No. of files is $(find "$@" -type f | wc -l)"
-      echo "No. of Reports is $(find "$@" -type f | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
+      echo "No. of Reports is $(find "$@" -type f | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.txt
+      ls
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/temp.txt
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
+
     shell: sh
     env:
       WORKDIR: ${{ inputs.working-directory }}
