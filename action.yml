@@ -49,11 +49,10 @@ runs:
       echo "$(find "$@" -type f | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
-      for i in testReports.yml
+      for i in $(find "$@" -type f | wc -l)
       do
         echo "Processing $i report.yaml file..."
         echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-i.yaml"
-        cat $i
       done
     shell: sh
     env:
