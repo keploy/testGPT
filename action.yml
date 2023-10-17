@@ -1,4 +1,4 @@
-name: 'Keploy TestRun'
+name: 'Keploy TestRun Report'
 description: "A action to run e2e test run"
 author: Alphasians
 branding:
@@ -20,6 +20,15 @@ inputs:
     description: Path to keploy
     required: true
     default: /
+outputs:
+  test-report:
+    description: Keploy Test report
+  success:
+    description: Count of passed tests
+    value: 
+  failed:
+    description: Count of failed tests
+    value:
 
 runs:
   using: "composite"
@@ -32,7 +41,8 @@ runs:
   - name: Grant permissions
     run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
-  - name: Run Script
+  - id: keploy-test-report
+    name: Run Script
     run:  ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
     env:
@@ -40,3 +50,8 @@ runs:
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
+  - name: Set outputs
+    run: |
+      echo "::set-output name=test-report::${{ steps.keploy-test-report.outputs.test-report }}"
+      echo "::set-output name=success::${{ steps.keploy-test-report.outputs.success }}"
+      echo "::set-output name=failed::${{ steps.keploy-test-report.outputs.failed }}"
