@@ -43,7 +43,8 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
+      rm TestReport.txt temp.yml
+      sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH} > ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt
       sed -i 's/no of test cases: //g' ${GITHUB_WORKSPACE}/${WORKDIR}/TestReport.txt > ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
