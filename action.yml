@@ -19,7 +19,7 @@ inputs:
   keploy-path:
     description: Path to keploy
     required: true
-    default: /
+    default: ./
 outputs:
   test-report:
     description: Keploy Test report
