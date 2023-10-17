@@ -43,16 +43,18 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      echo "$(find /${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
-      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
+      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy
+      echo "$(find . -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
+      cd /testReports
       ls
-      echo "$(find "$@" -type f | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
-      for i in $(find "$@" -type f | wc -l)
+      iterations=$(find . -type f -iname "report-*.yaml" | wc -l)
+      echo "$iterations"
+      for ((i=1 ; i<=$iterations; ++i))
       do
-        echo "Processing $i report.yaml file..."
-        echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-i.yaml"
+        echo "Processing ${i} report.yaml file..."
+        cat "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-${i}.yaml"
       done
     shell: sh
     env:
@@ -64,4 +66,4 @@ runs:
     uses: actions/upload-artifact@v3
     with:
         name: keploy-test-report-summary
-        path: ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-*.yaml
+        path: "output/keploy/testReports/report-*.yaml"
