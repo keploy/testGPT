@@ -45,7 +45,7 @@ runs:
       ${GITHUB_ACTION_PATH}/install.sh
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy
       echo "$(find . -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
-      cd ${GITHUB_WORKSPACE}/${WORKDIR}/testReports
+      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
