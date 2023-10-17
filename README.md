@@ -13,3 +13,5 @@ Enviormental Varibales needed : -
 `working-directory` :- Path where the pkg, keploy folder is present.
 `delay` :- is optional, it is the time taken by the application to get started.
 `command` :- Command to run the application.
+
+Right Now languages such as :- `Go`,`Java`,`NodeJS` & `Python` are supported.
