@@ -43,10 +43,9 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      cd ${GITHUB_WORKSPACE}/${WORKDIR}
-      sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH} > TestReport.txt
-      grep -E 'no of test cases:[0-9]+' TestReport.txt > temp.yml
-      cd /keploy/testReports
+      sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH} > ${GITHUB_WORKSPACE}/${WORKDIR}TestReport.txt
+      echo "No. of TestSets is $(find ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}temp.yml
+      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
       echo "No. of Reports is $(find "$@" -type f | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
