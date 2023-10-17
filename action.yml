@@ -46,9 +46,6 @@ runs:
       echo "$(find /${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yaml
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yaml >> $GITHUB_OUTPUT
-      
       echo "$(find "$@" -type f | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
@@ -64,3 +61,8 @@ runs:
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
+  - name: Upload TestReport
+    uses: actions/upload-artifact@v3
+    with:
+        name: keploy-test-report-summary
+        path: ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-*.yaml
