@@ -55,3 +55,4 @@ runs:
       echo "::set-output name=test-report::${{ steps.keploy-test-report.outputs.test-report }}"
       echo "::set-output name=success::${{ steps.keploy-test-report.outputs.success }}"
       echo "::set-output name=failed::${{ steps.keploy-test-report.outputs.failed }}"
+    shell: sh
