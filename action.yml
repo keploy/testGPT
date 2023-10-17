@@ -43,17 +43,14 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      echo "No. of TestSets is $(find /${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
+      echo "$(find /${GITHUB_WORKSPACE}/${WORKDIR}/keploy/ -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
-      echo "No. of Reports is $(find "$@" -type f | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
+      echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml" >> $GITHUB_OUTPUT
+      echo "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-*.yml"
+      echo "$(find "$@" -type f | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
-
-      echo "test-report=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
-      echo "success=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
-      echo "failed=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
-
     shell: sh
     env:
       WORKDIR: ${{ inputs.working-directory }}
