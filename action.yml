@@ -43,7 +43,7 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      echo "No. of TestSets is $(find . -type d -name 'test-set-*' | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}temp1.yml
+      echo "No. of TestSets is $(find . -type d -name 'test-set-*' | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp1.yml
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
       echo "No. of Reports is $(find "$@" -type f | wc -l)" >> ${GITHUB_WORKSPACE}/${WORKDIR}/temp.yml
