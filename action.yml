@@ -25,10 +25,8 @@ outputs:
     description: Keploy Test report
   success:
     description: Count of passed tests
-    value: 
   failed:
     description: Count of failed tests
-    value:
 
 runs:
   using: "composite"
@@ -43,16 +41,13 @@ runs:
     shell: sh
   - id: keploy-test-report
     name: Run Script
-    run:  ${GITHUB_ACTION_PATH}/install.sh
+    run:  |
+      ${GITHUB_ACTION_PATH}/install.sh
+      sudo -E keploy test -c "./application" --delay ${DELAY} --path ${KEPLOY_PATH} >> TestReport.txt
+      ls
     shell: sh
     env:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
-  - name: Set outputs
-    run: |
-      echo "::set-output name=test-report::${{ steps.keploy-test-report.outputs.test-report }}"
-      echo "::set-output name=success::${{ steps.keploy-test-report.outputs.success }}"
-      echo "::set-output name=failed::${{ steps.keploy-test-report.outputs.failed }}"
-    shell: sh
