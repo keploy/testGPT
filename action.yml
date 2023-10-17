@@ -50,17 +50,13 @@ runs:
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
 
+      echo "test-report=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
+      echo "success=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
+      echo "failed=$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)" >> $GITHUB_OUTPUT
+
     shell: sh
     env:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
-  - name: Set outputs
-    run: |
-      echo "::set-output name=test-report::$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)"
-      echo "::set-output name=success::$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)"
-      echo "::set-output name=failed::$(cat ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-1.yml)"
-    shell: bash
-    env:
-      WORKDIR: ${{ inputs.working-directory }}
