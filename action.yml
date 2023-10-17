@@ -48,7 +48,6 @@ runs:
       cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
       ls
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/testReports.yml
       iterations=$(find . -type f -iname "report-*.yaml" | wc -l)
       echo "$iterations"
       for ((i=1 ; i<=$iterations; ++i))
