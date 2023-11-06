@@ -1,8 +1,22 @@
 # Test-ReportQL
 
 ```yaml
- - name: Test-Report
-      uses: alphasians/test-reportql@main
+name: Run test-cases
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Keploy Report
+      uses: keploy/testgpt@main
       with:
         working-directory: /
         delay: 10
