@@ -43,18 +43,6 @@ runs:
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh
-      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy
-      echo "$(find . -type d -name 'test-set-*' | wc -l)" > ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml
-      cd ${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports
-      ls
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/testSets.yml      
-      iterations=$(find . -type f -iname "report-*.yaml" | wc -l)
-      echo "$iterations"
-      for ((i=1 ; i<=$iterations; ++i))
-      do
-        echo "Processing ${i} report.yaml file..."
-        cat "${GITHUB_WORKSPACE}/${WORKDIR}/keploy/testReports/report-${i}.yaml"
-      done
     shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
