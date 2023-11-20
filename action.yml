@@ -42,15 +42,20 @@ runs:
   - id: keploy-test-report
     name: Run Script
     run:  |
-      ${GITHUB_ACTION_PATH}/install.sh
+      ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
+      grep "TESTRUN SUMMARY. For testrun with id: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt > ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
+      grep "Total tests: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
+      grep "Total test passed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
+      grep "Total test failed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
+      echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt >> $GITHUB_OUTPUT
+      echo 'EOF' >> $GITHUB_OUTPUT
     shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
-  - name: Upload TestReport
-    uses: actions/upload-artifact@v3
-    with:
-        name: keploy-test-report-summary
-        path: "output/keploy/testReports/report-*.yaml"
+  - name: Comment on PR
+    run: ${{ steps.keploytestreport.outputs.KEPLOY_REPORT, '\n'}}
+    shell: bash
