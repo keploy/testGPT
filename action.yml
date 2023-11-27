@@ -20,13 +20,10 @@ inputs:
     description: Path to keploy
     required: true
     default: ./
-outputs:
-  test-report:
-    description: Keploy Test report
-  success:
-    description: Count of passed tests
-  failed:
-    description: Count of failed tests
+  secret_input: 
+     description: "GitHub Token"
+     required: false
+     default: ${{ github.token }}
 
 runs:
   using: "composite"
@@ -39,17 +36,18 @@ runs:
   - name: Grant permissions
     run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
-  - id: keploy-test-report
+  - id: keploytestreport
     name: Run Script
     run:  |
       ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
-      grep "TESTRUN SUMMARY. For testrun with id: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt > ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
-      grep "Total tests: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
-      grep "Total test passed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
-      grep "Total test failed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt
+      grep "TESTRUN SUMMARY. For testrun with id: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
+      grep "Total tests: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
+      grep "Total test passed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
+      grep "Total test failed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
       echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.txt >> $GITHUB_OUTPUT
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
       echo 'EOF' >> $GITHUB_OUTPUT
+      cat $GITHUB_OUTPUT
     shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
@@ -57,5 +55,15 @@ runs:
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
   - name: Comment on PR
-    run: ${{ steps.keploytestreport.outputs.KEPLOY_REPORT, '\n'}}
-    shell: bash
+    uses: actions/github-script@v6
+    env:
+      KEPLOY_REPORT: ${{ steps.keploytestreport.outputs.KEPLOY_REPORT }}
+    with:
+      github-token: ${{ github.token }}
+      script: |
+        github.rest.issues.createComment({
+          issue_number: context.issue.number,
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          body: process.env.KEPLOY_REPORT
+        })
