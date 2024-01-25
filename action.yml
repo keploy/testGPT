@@ -1,6 +1,6 @@
 name: 'Keploy TestRun Report'
 description: "A action to run e2e test run"
-author: Alphasians
+author: Sonichigo
 branding:
   icon: 'activity'
   color: 'orange'
@@ -48,6 +48,8 @@ runs:
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
       echo 'EOF' >> $GITHUB_OUTPUT
       cat $GITHUB_OUTPUT
+      cd ${GITHUB_WORKSPACE}/${WORKDIR} && ls
+      cat report.txt
     shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
