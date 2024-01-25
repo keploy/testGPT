@@ -1,6 +1,6 @@
 name: 'Keploy TestRun Report'
 description: "A action to run e2e test run"
-author: Sonichigo
+author: Alphasians
 branding:
   icon: 'activity'
   color: 'orange'
@@ -9,10 +9,6 @@ inputs:
   working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: true
-  delay:
-    description: Delay between each test cases
-    required: false
-    default: 20
   command:
     description: Command to run the application
     required: true
@@ -20,10 +16,6 @@ inputs:
     description: Path to keploy
     required: true
     default: ./
-  secret_input: 
-     description: "GitHub Token"
-     required: false
-     default: ${{ github.token }}
 
 runs:
   using: "composite"
@@ -36,10 +28,12 @@ runs:
   - name: Grant permissions
     run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
     shell: sh
-  - id: keploytestreport
+  - id: keploy-test-report
     name: Run Script
     run:  |
+      ${GITHUB_ACTION_PATH}/install.sh
       ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
       grep "TESTRUN SUMMARY. For testrun with id: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
       grep "Total tests: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
       grep "Total test passed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
@@ -48,8 +42,6 @@ runs:
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
       echo 'EOF' >> $GITHUB_OUTPUT
       cat $GITHUB_OUTPUT
-      cd ${GITHUB_WORKSPACE}/${WORKDIR} && ls
-      cat report.txt
     shell: bash
     env:
       WORKDIR: ${{ inputs.working-directory }}
