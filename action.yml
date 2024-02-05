@@ -16,6 +16,10 @@ inputs:
     description: Path to keploy
     required: true
     default: ./
+  delay:
+    description: Time to start application
+    required: true
+    default: 10
 
 runs:
   using: "composite"
