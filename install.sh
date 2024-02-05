@@ -18,29 +18,29 @@ if [[ "$COMMAND" =~ .*"go".* ]]; then
   go mod download
   go build -o application
   echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "./application" --delay ${DELAY} --path=${KEPLOY_PATH}
-  sudo -E keploy test -c "./application" --delay ${DELAY} --path=${KEPLOY_PATH}
+  echo sudo -E keploy test -c "./application" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  sudo -E keploy test -c "./application" --delay ${DELAY} --path "${KEPLOY_PATH}"
 
 elif [[ "$COMMAND" =~ .*"node".* ]]; then
   echo "Node is present."
   npm install
   echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
 
 elif [[ "$COMMAND" =~ .*"java".* ]]  || [[ "$COMMAND" =~ .*"mvn".* ]]; then
   echo "Java is present."
   mvn clean install
   echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
 
 elif [[ "$COMMAND" =~ .*"python".* ]] || [[ "$COMMAND" =~ .*"python3".* ]]; then
   echo "Python is present."
   pip install -r requirements.txt
   echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path ${KEPLOY_PATH}
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
 
 else
   echo "Language not found"
