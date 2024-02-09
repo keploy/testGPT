@@ -20,6 +20,8 @@ inputs:
     description: Time to start application
     required: true
     default: 10
+  container-name:
+    description: Name of the container in case of "docker compose" command
 
 runs:
   using: "composite"

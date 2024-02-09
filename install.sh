@@ -42,6 +42,19 @@ elif [[ "$COMMAND" =~ .*"python".* ]] || [[ "$COMMAND" =~ .*"python3".* ]]; then
   echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
   sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
 
+elif [[ "$COMMAND" =~ .*"docker-compose".* ]] || [[ "$COMMAND" =~ .*"docker compose".* ]]; then
+  echo "Docker compose is present."
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}"
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}"
+
+elif [[ "$COMMAND" =~ .*"docker".* ]]; then
+  echo "Docker is present."
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+
+
 else
   echo "Language not found"
   echo 'Test Mode Shutting 🎉'
