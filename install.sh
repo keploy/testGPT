@@ -2,6 +2,8 @@
 
 # Install Keploy binary using curl command
 curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
+echo curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
+
 sudo mv /tmp/keploy /usr/local/bin/keploy
 chmod +x /usr/local/bin/keploy
 echo "Keploy installed successfully 🎉"
@@ -42,7 +44,15 @@ elif [[ "$COMMAND" =~ .*"docker".* ]]; then
   echo "Docker command is present."
   # Run Docker command
   echo 'Test Mode Starting 🎉'
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+  if [[ "$COMMAND" =~ .*"docker".* ]]; then
+    echo "Docker command is present."
+    # Run Docker command
+    echo 'Test Mode Starting 🎉'
+    if [[ "$COMMAND" =~ .*"docker-compose".* ]]; then
+      sudo -E keploy test -c "${COMMAND}" --buildDelay ${DELAY} --containerName "${CONTAINER_NAME}" --path "${KEPLOY_PATH}"
+    else
+      sudo -E keploy test -c "${COMMAND}" --buildDelay ${DELAY} --path "${KEPLOY_PATH}"
+    fi
 
 else
   echo "Language or command not found"

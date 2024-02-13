@@ -56,6 +56,7 @@ runs:
       DELAY: ${{ inputs.delay }}
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
+      CONTAINER_NAME: ${{ inputs.container-name }}
   - name: Comment on PR
     uses: actions/github-script@v6
     env:
