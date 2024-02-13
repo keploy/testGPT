@@ -19,12 +19,12 @@ inputs:
   delay:
     description: Time to start application
     required: true
-    default: 10
+    default: 10s
   container-name:
     description: Name of the container in case of "docker compose" command
   build-delay:
     description: Time to wait for docker container build
-    default: 30
+    default: 50s
 
 runs:
   using: "composite"
