@@ -22,6 +22,9 @@ inputs:
     default: 10
   container-name:
     description: Name of the container in case of "docker compose" command
+  build-delay:
+    description: Time to wait for docker container build
+    default: 30
 
 runs:
   using: "composite"
@@ -55,6 +58,7 @@ runs:
       COMMAND : ${{ inputs.command }}
       KEPLOY_PATH: ${{inputs.keploy-path}}
       CONTAINER_NAME: ${{inputs.container-name}}
+      BUILD_DELAY: ${{inputs.build-delay}}
   - name: Comment on PR
     uses: actions/github-script@v6
     env:
