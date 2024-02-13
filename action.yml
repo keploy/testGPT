@@ -43,10 +43,14 @@ runs:
       ${GITHUB_ACTION_PATH}/install.sh
       ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
-      grep "TESTRUN SUMMARY. For testrun with id: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
-      grep "Total tests: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
-      grep "Total test passed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
-      grep "Total test failed: " ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" >> ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
+
+      # Search for the complete testrun summary and extract total tests, total test passed, and total test failed data
+      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total tests: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out
+      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test passed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out
+      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test failed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out
+
+      # Combine the results into a single file and prepare output
+      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
       echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
       cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
       echo 'EOF' >> $GITHUB_OUTPUT
