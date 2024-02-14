@@ -2,7 +2,7 @@ name: 'Keploy TestRun Report'
 description: "An action to run e2e test run"
 author: Alphasians
 branding:
-  icon: 'activity'
+  icon: 'refresh-cw'
   color: 'orange'
 
 inputs:
@@ -20,6 +20,11 @@ inputs:
     description: Time to start application
     required: true
     default: 10
+  container-name:
+    description: Name of the container in case of "docker compose" command
+  build-delay:
+    description: Time to wait for docker container build
+    default: 50s
 
 runs:
   using: "composite"
@@ -83,3 +88,4 @@ runs:
             repo: context.repo.repo,
             body: process.env.KEPLOY_REPORT
           })
+    shell: bash
