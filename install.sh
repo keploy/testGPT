@@ -1,6 +1,6 @@
 # Install Keploy binary using curl command
 curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
-echo curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
+echo "curl --silent --location 'https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz' | tar xz -C /tmp"
 
 sudo mv /tmp/keploy /usr/local/bin/keploy
 chmod +x /usr/local/bin/keploy
@@ -41,6 +41,18 @@ elif [[ "$COMMAND" =~ .*"python".* ]] || [[ "$COMMAND" =~ .*"python3".* ]]; then
   echo 'Test Mode Starting 🎉'
   echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
   sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+
+elif [[ "$COMMAND" =~ .*"docker-compose".* ]] || [[ "$COMMAND" =~ .*"docker compose".* ]]; then
+  echo "Docker compose is present."
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}" --buildDelay ${BUILD_DELAY}
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}" --buildDelay ${BUILD_DELAY}
+
+elif [[ "$COMMAND" =~ .*"docker".* ]]; then
+  echo "Docker is present."
+  echo 'Test Mode Starting 🎉'
+  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --buildDelay ${BUILD_DELAY}
+  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --buildDelay ${BUILD_DELAY}
 
 else
   echo "Language not found"
