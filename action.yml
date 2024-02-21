@@ -1,8 +1,8 @@
 name: 'Keploy TestRun Report'
-description: "A action to run e2e test run"
+description: "An action to run e2e test run"
 author: Alphasians
 branding:
-  icon: 'activity'
+  icon: 'refresh-cw'
   color: 'orange'
 
 inputs:
@@ -19,7 +19,7 @@ inputs:
   delay:
     description: Time to start application
     required: true
-    default: 10s
+    default: 10
   container-name:
     description: Name of the container in case of "docker compose" command
   build-delay:
@@ -29,50 +29,63 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: Setup GITHUB_PATH for script
-    run: |
-      echo "${{ github.action_path }}" >> $GITHUB_PATH
-      echo "${{ inputs.working-directory }}"
-    shell: bash
-  - name: Grant permissions
-    run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
-    shell: sh
-  - id: keploy-test-report
-    name: Run Script
-    run:  |
-      ${GITHUB_ACTION_PATH}/install.sh
-      ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
+    - name: Setup GITHUB_PATH for script
+      run: |
+        echo "${{ github.action_path }}" >> $GITHUB_PATH
+        echo "${{ inputs.working-directory }}"
+      shell: bash
+    - name: Grant permissions
+      run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
+      shell: sh
+    - id: keploy-test-report
+      name: Run Script
+      run:  |
+        ${GITHUB_ACTION_PATH}/install.sh
+        ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
+        cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
 
-      # Search for the complete testrun summary and extract total tests, total test passed, and total test failed data
-      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total tests: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out
-      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test passed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out
-      grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test failed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out
+        # Search for the complete testrun summary and extract total tests, total test passed, and total test failed data
+        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total tests: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out
+        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test passed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out
+        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test failed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out
 
-      # Combine the results into a single file and prepare output
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
-      echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
-      cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
-      echo 'EOF' >> $GITHUB_OUTPUT
-      cat $GITHUB_OUTPUT
-    shell: bash
-    env:
-      WORKDIR: ${{ inputs.working-directory }}
-      DELAY: ${{ inputs.delay }}
-      COMMAND : ${{ inputs.command }}
-      KEPLOY_PATH: ${{inputs.keploy-path}}
-      CONTAINER_NAME: ${{inputs.container-name}}
-      BUILD_DELAY: ${{inputs.build-delay}}
-  - name: Comment on PR
-    uses: actions/github-script@v6
-    env:
-      KEPLOY_REPORT: ${{ steps.keploytestreport.outputs.KEPLOY_REPORT }}
-    with:
-      github-token: ${{ github.token }}
-      script: |
-        github.rest.issues.createComment({
-          issue_number: context.issue.number,
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          body: process.env.KEPLOY_REPORT
-        })
+        # Combine the results into a single file and prepare output
+        cat ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
+        echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
+        cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
+        cat $GITHUB_OUTPUT
+      shell: bash
+      env:
+        WORKDIR: ${{ inputs.working-directory }}
+        DELAY: ${{ inputs.delay }}
+        COMMAND : ${{ inputs.command }}
+        KEPLOY_PATH: ${{inputs.keploy-path}}
+    - name: Check if report is generated
+      run: |
+        if [ -s ${GITHUB_WORKSPACE}/${WORKDIR}/final.out ]; then
+          echo "Report generated successfully."
+        else
+          echo "Error: Report not generated." >&2
+          exit 1
+        fi
+      shell: bash
+    - name: Comment on PR
+      if: success()
+      uses: actions/github-script@v6
+      env:
+        KEPLOY_REPORT: ${{ steps.keploy-test-report.outputs.KEPLOY_REPORT }}
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          if (!process.env.KEPLOY_REPORT) {
+            console.error('Error: KEPLOY_REPORT not found.');
+            process.exit(1);
+          }
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: process.env.KEPLOY_REPORT
+          })
+      shell: bash
