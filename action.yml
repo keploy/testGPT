@@ -57,8 +57,6 @@ runs:
         CONFIG_PATH: ${{inputs.config-path}}
         DELAY: ${{ inputs.delay }}
         CI_MODE: ${{ inputs.ci-mode }}
-      outputs:
-        script_output: ${{ steps.keploy-test-keploy.outputs.script_output }}
     # Example of using the output in a subsequent step
     - name: Use Script Output
       run: |
