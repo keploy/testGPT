@@ -1,11 +1,15 @@
-name: 'Keploy TestRun Report'
-description: "An action to run e2e test run"
-author: Alphasians
+name: 'Keploy test Keploy'
+description: "An action to test keploy with keploy"
+author: gouravkrosx
 branding:
   icon: 'refresh-cw'
   color: 'orange'
 
 inputs:
+  branch: 
+    description: Branch of the repository you want to use
+    required: true  
+    default: 'main'
   working-directory:
     description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
     required: true
@@ -13,18 +17,20 @@ inputs:
     description: Command to run the application
     required: true
   keploy-path:
-    description: Path to keploy
+    description: Path to keploy pre-recorded test cases
     required: true
     default: ./
+  config-path: 
+    description: Path to the config file
+    required: true
+    default: ./  
   delay:
     description: Time to start application
     required: true
     default: 10
-  container-name:
-    description: Name of the container in case of "docker compose" command
-  build-delay:
-    description: Time to wait for docker container build
-    default: 50s
+  ci-mode:
+    description: The CI mode specifies whether the Keploy binary should be hosted and which one should be built. "recordHosted-testBuild" (0) or "recordBuild-testHosted" (1).
+    required: true
 
 runs:
   using: "composite"
@@ -37,55 +43,44 @@ runs:
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh
-    - id: keploy-test-report
+    - id: keploy-test-keploy
       name: Run Script
-      run:  |
+      run: |
         ${GITHUB_ACTION_PATH}/install.sh
-        ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
-        cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
-
-        # Search for the complete testrun summary and extract total tests, total test passed, and total test failed data
-        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total tests: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out
-        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test passed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out
-        grep -oE "COMPLETE TESTRUN SUMMARY\.\s+Total test failed: [0-9]+" ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt | sed -r "s/\x1B\[[0-9;]*[mGK]//g" > ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out
-
-        # Combine the results into a single file and prepare output
-        cat ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_tests.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_passed.out ${GITHUB_WORKSPACE}/${WORKDIR}/final_total_failed.out > ${GITHUB_WORKSPACE}/${WORKDIR}/final.out
-        echo 'KEPLOY_REPORT<<EOF' > $GITHUB_OUTPUT
-        cat ${GITHUB_WORKSPACE}/${WORKDIR}/final.out >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
-        cat $GITHUB_OUTPUT
+       
       shell: bash
       env:
+        BRANCH: ${{ inputs.branch }}
         WORKDIR: ${{ inputs.working-directory }}
-        DELAY: ${{ inputs.delay }}
         COMMAND : ${{ inputs.command }}
         KEPLOY_PATH: ${{inputs.keploy-path}}
-    - name: Check if report is generated
+        CONFIG_PATH: ${{inputs.config-path}}
+        DELAY: ${{ inputs.delay }}
+        CI_MODE: ${{ inputs.ci-mode }}
+      outputs:
+        script_output: ${{ steps.keploy-test-keploy.outputs.script_output }}
+    # Example of using the output in a subsequent step
+    - name: Use Script Output
       run: |
-        if [ -s ${GITHUB_WORKSPACE}/${WORKDIR}/final.out ]; then
-          echo "Report generated successfully."
-        else
-          echo "Error: Report not generated." >&2
-          exit 1
-        fi
-      shell: bash
-    - name: Comment on PR
-      if: success()
-      uses: actions/github-script@v6
-      env:
-        KEPLOY_REPORT: ${{ steps.keploy-test-report.outputs.KEPLOY_REPORT }}
-      with:
-        github-token: ${{ github.token }}
-        script: |
-          if (!process.env.KEPLOY_REPORT) {
-            console.error('Error: KEPLOY_REPORT not found.');
-            process.exit(1);
-          }
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: process.env.KEPLOY_REPORT
-          })
-      shell: bash
+          echo "Output from script: ${{ steps.keploy-test-keploy.outputs.script_output }}"        
+
+                  
+    # - name: Comment on PR
+    #   if: success()
+    #   uses: actions/github-script@v6
+    #   env:
+    #     KEPLOY_REPORT: ${{ steps.keploy-test-report.outputs.KEPLOY_REPORT }}
+    #   with:
+    #     github-token: ${{ github.token }}
+    #     script: |
+    #       if (!process.env.KEPLOY_REPORT) {
+    #         console.error('Error: KEPLOY_REPORT not found.');
+    #         process.exit(1);
+    #       }
+    #       github.rest.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: process.env.KEPLOY_REPORT
+    #       })
+    #   shell: bash
