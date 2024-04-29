@@ -41,7 +41,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        repository: ${{ inputs.repository }}
+        repository: keploy/samples-go
         ref: ${{ inputs.branch }}
         path: ${{ inputs.working-directory }}
     - run: |
