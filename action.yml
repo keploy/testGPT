@@ -14,7 +14,7 @@ inputs:
     required: true  
     default: 'main'
   working-directory:
-    description: Relative path under $GITHUB_WORKSPACE where the repository was checked out
+    description: Relative path where your application code is located
     required: true
   command:
     description: Command to run the application
@@ -41,8 +41,12 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
+        repository: ${{ inputs.repository }}
         ref: ${{ inputs.branch }}
         path: ${{ inputs.working-directory }}
+      run: |
+        echo "Repository checked out"
+        echo "Repository: ${{ inputs.repository }}"
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh

@@ -1,3 +1,5 @@
+#Print the current github workspace
+echo Github_workspace "${GITHUB_WORKSPACE}"
 
 # Add fake installation-id for the workflow.
 source ${GITHUB_WORKSPACE}/.github/workflows/test_workflow_scripts/test-iid.sh
@@ -34,9 +36,8 @@ check_test_status() {
 }
 
 
-# Get the current working directory of the application
-cd ${WORKDIR}
-echo "${WORKDIR}"
+# Print the current working directory of the application
+echo working directory "${WORKDIR}"
 
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
