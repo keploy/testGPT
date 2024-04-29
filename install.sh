@@ -52,6 +52,13 @@ delete_if_exists "$pre_rec/keploy/reports"
 # Get all directories except the 'reports' directory
 test_sets=$(find "$pre_rec/keploy/" -mindepth 1 -maxdepth 1 -type d ! -name "reports" -exec basename {} \;)
 
+# Check the exit status of the find command
+if [ $? -ne 0 ]; then
+    echo "Error: No such file or directory."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
+
 # Count the number of directories found
 num_test_sets=$(echo "$test_sets" | wc -l)
 
