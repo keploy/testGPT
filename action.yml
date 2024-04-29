@@ -22,11 +22,11 @@ inputs:
   keploy-path:
     description: Path to keploy pre-recorded test cases
     required: true
-    default: ./
+    default: .
   config-path: 
     description: Path to the config file
     required: true
-    default: ./  
+    default: .  
   delay:
     description: Time to start application
     required: true
