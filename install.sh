@@ -1,60 +1,144 @@
-# Install Keploy binary using curl command
-curl --silent --location "https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz" | tar xz -C /tmp
-echo "curl --silent --location 'https://github.com/keploy/keploy/releases/latest/download/keploy_linux_amd64.tar.gz' | tar xz -C /tmp"
 
-sudo mv /tmp/keploy /usr/local/bin/keploy
-chmod +x /usr/local/bin/keploy
+# Add fake installation-id for the workflow.
+source ./../../.github/workflows/test_workflow_scripts/test-iid.sh
 
-echo "Keploy installed successfully 🎉"
+delete_if_exists() {
+    local path=$1
+    if [ -e "$path" ]; then
+        sudo rm -rf "$path"
+    fi
+}
 
+
+check_test_status() {
+    local path=$1
+    local fixed_index=$2 # Boolean to determine if index should be fixed to 0
+    local overallStatus=1 # true
+    local idx=0 # Initialize index
+
+    for dir in $test_sets; do
+        if [ "$fixed_index" -eq 1 ]; then
+            local report_file="$path/keploy/reports/test-run-0/$dir-report.yaml"
+        else
+            local report_file="$path/keploy/reports/test-run-$idx/$dir-report.yaml"
+            idx=$((idx + 1))
+        fi
+        
+        local test_status=$(grep 'status:' "$report_file" | head -n 1 | awk '{print $2}')
+        
+        if [ "$test_status" != "PASSED" ]; then
+            overallStatus=0 # false
+        fi
+    done
+    echo $overallStatus
+}
+
+# Checkout a different branch
+git fetch origin
+git checkout ${BRANCH}
+
+# Get the current working directory of the application
 cd ${GITHUB_WORKSPACE}/${WORKDIR}
 echo "${GITHUB_WORKSPACE}/${WORKDIR}"
-# Generate app binary
-echo "ls"
-ls
 
-if [[ "$COMMAND" =~ .*"go".* ]]; then
-  echo "go is present."
-  go mod download
-  go build -o application
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "./application" --delay ${DELAY} --path "${KEPLOY_PATH}"
-  sudo -E keploy test -c "./application" --delay ${DELAY} --path "${KEPLOY_PATH}"
+#### Recording Phase of test-bench ####
+pre_rec="${KEPLOY_PATH}"
 
-elif [[ "$COMMAND" =~ .*"node".* ]]; then
-  echo "Node is present."
-  npm install
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+# Delete the reports directory if it exists
+delete_if_exists "$pre_rec/keploy/reports"
 
-elif [[ "$COMMAND" =~ .*"java".* ]]  || [[ "$COMMAND" =~ .*"mvn".* ]]; then
-  echo "Java is present."
-  mvn clean install
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+# Get all directories except the 'reports' directory
+test_sets=$(find "$pre_rec/keploy/" -mindepth 1 -maxdepth 1 -type d ! -name "reports" -exec basename {} \;)
 
-elif [[ "$COMMAND" =~ .*"python".* ]] || [[ "$COMMAND" =~ .*"python3".* ]]; then
-  echo "Python is present."
-  pip install -r requirements.txt
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}"
+# Loop over each directory stored in 'test_sets'
+for dir in $test_sets; do
+    echo "Recording and replaying for (test-set): $dir"
+    #CI_MODE (0, recordHosted,testBuild) , (1, recordBuild, testHosted)
+    if [ "$CI_MODE" -eq 0 ]; then
+        sudo -E env PATH=$PATH keployH record -c "sudo -E env PATH=$PATH keployB test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
+    else
+        sudo -E env PATH=$PATH keployB record -c "sudo -E env PATH=$PATH keployH test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
+    fi
+    # Wait for 1 second before new test-set
+    sleep 1
+done
 
-elif [[ "$COMMAND" =~ .*"docker-compose".* ]] || [[ "$COMMAND" =~ .*"docker compose".* ]]; then
-  echo "Docker compose is present."
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}" --buildDelay ${BUILD_DELAY}
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --containerName "${CONTAINER_NAME}" --buildDelay ${BUILD_DELAY}
+sleep 2
 
-elif [[ "$COMMAND" =~ .*"docker".* ]]; then
-  echo "Docker is present."
-  echo 'Test Mode Starting 🎉'
-  echo sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --buildDelay ${BUILD_DELAY}
-  sudo -E keploy test -c "${COMMAND}" --delay ${DELAY} --path "${KEPLOY_PATH}" --buildDelay ${BUILD_DELAY}
-
-else
-  echo "Language not found"
-  echo 'Test Mode Shutting 🎉'
+# Check whether the original tests passed or failed
+overallStatus=$(check_test_status "$pre_rec" 0)
+echo "Overall TestRun status for pre-recorded testscase ran via test-bench: $overallStatus"
+if [ "$overallStatus" -eq 0 ]; then
+    echo "Pre-recorded testcases failed. Exiting..."
+    delete_if_exists "$pre_rec/keploy/reports"
+    echo "::set-output name=script_output::failure"
+    exit 1
 fi
+
+#### Testing Phase of test-bench ####
+test_bench_rec="./test-bench"
+
+## Test assertion
+pilot -test-assert -preRecPath $pre_rec -testBenchPath $test_bench_rec
+exit_status=$?
+if [ $exit_status -ne 0 ]; then
+    echo "Test assertion failed with exit status $exit_status."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
+
+echo "Tests are asserted successfully."
+
+
+## Mock assertion preparation
+
+pilot -mock-assert -preRecPath $pre_rec -testBenchPath $test_bench_rec
+exit_status=$?
+if [ $exit_status -ne 0 ]; then
+    echo "Mock assertion preparation failed with exit status $exit_status."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
+
+echo "Mock assertion prepared successfully."
+
+## Now run the tests both for pre-recorded test cases and test-bench recorded test cases to compare the mocks (mock assertion)
+delete_if_exists "$pre_rec/keploy/reports"
+
+## Run tests for pre-recorded test cases
+sudo -E env PATH=$PATH keployH test -c "${COMMAND}" --delay ${DELAY} --path "$pre_rec" --generateGithubActions=false
+
+sleep 2
+
+overallStatus=$(check_test_status "$pre_rec" 1)
+echo "Overall TestRun status for pre-recorded testscase (after mock assertion): $overallStatus"
+if [ "$overallStatus" -eq 0 ]; then
+    echo "Newly recorded mocks are not consistent with the pre-recorded mocks."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
+echo "New mocks are consistent with the pre-recorded mocks."
+
+
+## Run tests for test-bench-recorded test cases
+sudo -E env PATH=$PATH keployH test -c "./ginApp" --delay ${DELAY} --path "$test_bench_rec" --generateGithubActions=false
+
+sleep 2
+
+overallStatus=$(check_test_status "$test_bench_rec" 1)
+echo "Overall TestRun status for test-bench-recorded testscase (after mock assertion): $overallStatus"
+if [ "$overallStatus" -eq 0 ]; then
+    echo "Old recorded mocks are not consistent with the test-bench-recorded mocks."
+    delete_if_exists "$test_bench_rec"
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
+echo "Old mocks are consistent with the test-bench-recorded mocks."
+
+# Delete the tests and mocks generated via test-bench.
+delete_if_exists "$test_bench_rec"
+
+echo "Tests and mocks are consistent for this application."
+echo "::set-output name=script_output::success"
+
+exit 0
