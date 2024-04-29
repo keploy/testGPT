@@ -38,8 +38,10 @@ check_test_status() {
 
 # Print the current working directory of the application
 echo working directory "${WORKDIR}"
+ls
+echo "Current directory: $(pwd)"
 cd "${WORKDIR}"
-
+cd gin-mongo
 ls 
 
 #### Recording Phase of test-bench ####
