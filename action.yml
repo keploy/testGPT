@@ -46,6 +46,7 @@ runs:
         path: ${{ inputs.working-directory }}
     - run: |
         echo "Repository: ${{ inputs.repository }}"
+      shell: sh
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh
