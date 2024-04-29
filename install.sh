@@ -1,6 +1,6 @@
 
 # Add fake installation-id for the workflow.
-source ./../../.github/workflows/test_workflow_scripts/test-iid.sh
+source ${GITHUB_WORKSPACE}/.github/workflows/test_workflow_scripts/test-iid.sh
 
 delete_if_exists() {
     local path=$1
@@ -33,13 +33,10 @@ check_test_status() {
     echo $overallStatus
 }
 
-# Checkout a different branch
-git fetch origin
-git checkout ${BRANCH}
 
 # Get the current working directory of the application
-cd ${GITHUB_WORKSPACE}/${WORKDIR}
-echo "${GITHUB_WORKSPACE}/${WORKDIR}"
+cd ${WORKDIR}
+echo "${WORKDIR}"
 
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
@@ -49,6 +46,16 @@ delete_if_exists "$pre_rec/keploy/reports"
 
 # Get all directories except the 'reports' directory
 test_sets=$(find "$pre_rec/keploy/" -mindepth 1 -maxdepth 1 -type d ! -name "reports" -exec basename {} \;)
+
+# Count the number of directories found
+num_test_sets=$(echo "$test_sets" | wc -l)
+
+# Check if the number of directories is zero
+if [ "$num_test_sets" -eq 0 ]; then
+    echo "No test sets found."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
 
 # Loop over each directory stored in 'test_sets'
 for dir in $test_sets; do

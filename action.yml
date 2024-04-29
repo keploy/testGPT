@@ -6,6 +6,9 @@ branding:
   color: 'orange'
 
 inputs:
+  repository:
+    description: Name of the repository you want to use
+    required: true
   branch: 
     description: Branch of the repository you want to use
     required: true  
@@ -35,11 +38,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup GITHUB_PATH for script
-      run: |
-        echo "${{ github.action_path }}" >> $GITHUB_PATH
-        echo "${{ inputs.working-directory }}"
-      shell: bash
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ inputs.branch }}
+        path: ${{ inputs.working-directory }}
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh
@@ -50,6 +53,7 @@ runs:
        
       shell: bash
       env:
+        REPOSITORY: ${{ inputs.repository }}
         BRANCH: ${{ inputs.branch }}
         WORKDIR: ${{ inputs.working-directory }}
         COMMAND : ${{ inputs.command }}
