@@ -44,8 +44,7 @@ runs:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.branch }}
         path: ${{ inputs.working-directory }}
-      run: |
-        echo "Repository checked out"
+    - run: |
         echo "Repository: ${{ inputs.repository }}"
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
