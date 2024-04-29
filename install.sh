@@ -40,6 +40,8 @@ check_test_status() {
 echo working directory "${WORKDIR}"
 cd "${WORKDIR}"
 
+ls 
+
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
 

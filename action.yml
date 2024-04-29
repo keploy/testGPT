@@ -45,7 +45,6 @@ runs:
         ref: ${{ inputs.branch }}
         path: ${{ inputs.working-directory }}
     - run: |
-        echo "Repository: ${{ inputs.repository }}"
         ls
         echo ${{ inputs.working-directory }}
       shell: sh
