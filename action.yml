@@ -61,7 +61,7 @@ runs:
     - name: Use Script Output
       run: |
           echo "Output from script: ${{ steps.keploy-test-keploy.outputs.script_output }}"        
-
+      shell: bash
                   
     # - name: Comment on PR
     #   if: success()
