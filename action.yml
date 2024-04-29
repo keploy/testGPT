@@ -38,16 +38,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        repository: keploy/samples-go
-        ref: ${{ inputs.branch }}
-        path: ${{ inputs.working-directory }}
-    - run: |
-        ls
-        echo ${{ inputs.working-directory }}
-      shell: sh
+    # - name: Checkout repository
+    #   uses: actions/checkout@v2
+    #   with:
+    #     repository: keploy/samples-go
+    #     ref: ${{ inputs.branch }}
+    #     path: ${{ inputs.working-directory }}
+    # - run: |
+    #     ls
+    #     echo ${{ inputs.working-directory }}
+    #   shell: sh
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh

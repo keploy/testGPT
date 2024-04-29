@@ -41,11 +41,7 @@ echo working directory "${WORKDIR}"
 ls
 echo "Current directory: $(pwd)"
 cd "${WORKDIR}"
-cd gin-mongo
 ls 
-go build -o ginApp .
-# change the COMMAND to ./ginApp
-COMMAND="./ginApp"
 
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
