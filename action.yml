@@ -71,7 +71,7 @@ runs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ steps.coverage-zip.outputs.coverage_name }}
-        path: ${{ inputs.working-directory }}/${{ steps.coverage-zip.outputs.coverage_name }}.zip
+        path: ${{ steps.coverage-zip.outputs.coverage_name }}.zip
 
 
     
