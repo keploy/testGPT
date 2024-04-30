@@ -61,9 +61,11 @@ runs:
     - name: Get coverage data and zip it
       id: coverage-zip  # Unique ID for the step
       run: |
-        ls -l ${{ inputs.working-directory }}/coverage-reports
-
-        workdir="${{ inputs.working-directory }}".replace('/', '-')        
+        workdir="${{ inputs.working-directory }}/"
+        workdir="${workdir//\//-}"
+        workdir="${workdir%-}"
+        
+        ls -l ${{ inputs.working-directory }}/coverage-reports        
         coverage="coverage-reports-${workdir}-${{ inputs.ci-mode }}"
         echo "coverage=$coverage"
         echo "::set-output name=coverage_name::$coverage"
