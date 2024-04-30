@@ -57,11 +57,19 @@ runs:
         CONFIG_PATH: ${{inputs.config-path}}
         DELAY: ${{ inputs.delay }}
         CI_MODE: ${{ inputs.ci-mode }}
+
+    - name: Get coverage data and zip it
+      run: |
+        pwd
+        ls  
+    
     # Example of using the output in a subsequent step
     - name: Use Script Output
       run: |
           echo "Output from script: ${{ steps.keploy-test-keploy.outputs.script_output }}"        
       shell: bash
+    
+    - name 
                   
     # - name: Comment on PR
     #   if: success()

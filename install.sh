@@ -40,6 +40,12 @@ check_test_status() {
 echo "Working directory: ${WORKDIR}"
 cd "${WORKDIR}"
 
+# Make a directory to dump coverage
+mkdir coverage-reports
+
+# Set GOCOVERDIR to the coverage directory
+export GOCOVERDIR="./coverage-reports"
+
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
 
