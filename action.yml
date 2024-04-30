@@ -60,6 +60,7 @@ runs:
 
     - name: Get coverage data and zip it
       run: |
+        ls -l ${{inputs.working-directory}}
         coverage_reports_zip="coverage-reports-${{inputs.working-directory}}-${{inputs.ci-mode}}.zip"
         zip -r $coverage_reports_zip ${{inputs.working-directory}}/coverage-reports
       shell: bash    
