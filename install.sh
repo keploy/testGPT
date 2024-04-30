@@ -35,8 +35,6 @@ check_test_status() {
     echo $overallStatus
 }
 
-echo "deliberate failure"
-exit 1
 
 # Go to the working directory
 echo "Working directory: ${WORKDIR}"
