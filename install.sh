@@ -35,9 +35,12 @@ check_test_status() {
     echo $overallStatus
 }
 
+echo "Deliberately failing the script to test the failure case."
+echo "::set-output name=script_output::failure"
+exit 1
 
 # Go to the working directory
-echo "Working directory: ${WORKING_DIR}"
+echo "Working directory: ${WORKDIR}"
 cd "${WORKDIR}"
 
 #### Recording Phase of test-bench ####
@@ -93,6 +96,8 @@ if [ "$overallStatus" -eq 0 ]; then
     exit 1
 fi
 
+echo "Successfully recorded tests and mocks via test-bench 🎉"
+
 #### Testing Phase of test-bench ####
 test_bench_rec="./test-bench"
 
@@ -105,7 +110,7 @@ if [ $exit_status -ne 0 ]; then
     exit 1
 fi
 
-echo "Tests are asserted successfully."
+echo "Tests are asserted successfully 🎉"
 
 
 ## Mock assertion preparation
@@ -118,7 +123,7 @@ if [ $exit_status -ne 0 ]; then
     exit 1
 fi
 
-echo "Mock assertion prepared successfully."
+echo "Mock assertion prepared successfully 🎉"
 
 ## Now run the tests both for pre-recorded test cases and test-bench recorded test cases to compare the mocks (mock assertion)
 delete_if_exists "$pre_rec/keploy/reports"
@@ -135,7 +140,7 @@ if [ "$overallStatus" -eq 0 ]; then
     echo "::set-output name=script_output::failure"
     exit 1
 fi
-echo "New mocks are consistent with the pre-recorded mocks."
+echo "New mocks are consistent with the pre-recorded mocks 🎉"
 
 
 ## Run tests for test-bench-recorded test cases
@@ -151,12 +156,12 @@ if [ "$overallStatus" -eq 0 ]; then
     echo "::set-output name=script_output::failure"
     exit 1
 fi
-echo "Old mocks are consistent with the test-bench-recorded mocks."
+echo "Old mocks are consistent with the test-bench-recorded mocks 🎉"
 
 # Delete the tests and mocks generated via test-bench.
 delete_if_exists "$test_bench_rec"
 
-echo "Tests and mocks are consistent for this application."
+echo "Tests and mocks are consistent for this application 🎉"
 echo "::set-output name=script_output::success"
 
 exit 0
