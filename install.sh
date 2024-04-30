@@ -36,13 +36,6 @@ check_test_status() {
 }
 
 
-# Print the current working directory of the application
-echo working directory "${WORKDIR}"
-ls
-echo "Current directory: $(pwd)"
-cd "${WORKDIR}"
-ls 
-
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
 
@@ -74,8 +67,10 @@ for dir in $test_sets; do
     echo "Recording and replaying for (test-set): $dir"
     #CI_MODE (0, recordHosted,testBuild) , (1, recordBuild, testHosted)
     if [ "$CI_MODE" -eq 0 ]; then
+        echo "Latest version of keploy is being used for recording, Build version of keploy is being used for testing" 
         sudo -E env PATH=$PATH keployH record -c "sudo -E env PATH=$PATH keployB test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
     else
+        echo "Build version of keploy is being used for recording, Latest version of keploy is being used for testing" 
         sudo -E env PATH=$PATH keployB record -c "sudo -E env PATH=$PATH keployH test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
     fi
     # Wait for 1 second before new test-set
@@ -140,7 +135,7 @@ echo "New mocks are consistent with the pre-recorded mocks."
 
 
 ## Run tests for test-bench-recorded test cases
-sudo -E env PATH=$PATH keployH test -c "./ginApp" --delay ${DELAY} --path "$test_bench_rec" --generateGithubActions=false
+sudo -E env PATH=$PATH keployH test -c "${COMMAND}" --delay ${DELAY} --path "$test_bench_rec" --generateGithubActions=false
 
 sleep 2
 

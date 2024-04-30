@@ -6,13 +6,6 @@ branding:
   color: 'orange'
 
 inputs:
-  repository:
-    description: Name of the repository you want to use
-    required: true
-  branch: 
-    description: Branch of the repository you want to use
-    required: true  
-    default: 'main'
   working-directory:
     description: Relative path where your application code is located
     required: true
@@ -40,8 +33,6 @@ runs:
   steps:
     - name: Print the input data.
       run: |
-        echo "Repository: ${{ inputs.repository }}"
-        echo "Branch: ${{ inputs.branch }}"
         echo "Working Directory: ${{ inputs.working-directory }}"
         echo "Command: ${{ inputs.command }}"
         echo "Keploy Path: ${{ inputs.keploy-path }}"
@@ -49,11 +40,10 @@ runs:
         echo "Delay: ${{ inputs.delay }}"
         echo "CI Mode: ${{ inputs.ci-mode }}"
       shell: bash
-    - name: Check current directory
-      run: |
-        pwd
-        ls
+    - name: Go to the working directory
+      run: cd ${{ inputs.working-directory }}
       shell: sh
+      
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh
@@ -64,8 +54,6 @@ runs:
        
       shell: bash
       env:
-        REPOSITORY: ${{ inputs.repository }}
-        BRANCH: ${{ inputs.branch }}
         WORKDIR: ${{ inputs.working-directory }}
         COMMAND : ${{ inputs.command }}
         KEPLOY_PATH: ${{inputs.keploy-path}}
