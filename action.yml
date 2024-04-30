@@ -38,12 +38,24 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Print the input data.
+      run: |
+        echo "Repository: ${{ inputs.repository }}"
+        echo "Branch: ${{ inputs.branch }}"
+        echo "Working Directory: ${{ inputs.working-directory }}"
+        echo "Command: ${{ inputs.command }}"
+        echo "Keploy Path: ${{ inputs.keploy-path }}"
+        echo "Config Path: ${{ inputs.config-path }}"
+        echo "Delay: ${{ inputs.delay }}"
+        echo "CI Mode: ${{ inputs.ci-mode }}"
+      shell: bash
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
         repository: ${{inputs.repository}}
         ref: ${{ inputs.branch }}
     - run: |
+        pwd
         ls
       shell: sh
     - name: Grant permissions
