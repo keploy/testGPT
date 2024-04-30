@@ -35,9 +35,6 @@ check_test_status() {
     echo $overallStatus
 }
 
-echo "Deliberately failing the script to test the failure case."
-echo "::set-output name=script_output::failure"
-exit 1
 
 # Go to the working directory
 echo "Working directory: ${WORKDIR}"
