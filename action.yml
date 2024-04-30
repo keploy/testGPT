@@ -40,10 +40,7 @@ runs:
         echo "Delay: ${{ inputs.delay }}"
         echo "CI Mode: ${{ inputs.ci-mode }}"
       shell: bash
-    - name: Go to the working directory
-      run: cd ${{ inputs.working-directory }}
-      shell: sh
-      
+
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
       shell: sh
