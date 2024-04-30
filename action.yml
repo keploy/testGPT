@@ -60,9 +60,15 @@ runs:
 
     - name: Get coverage data and zip it
       run: |
-        pwd
-        ls
+        coverage_reports_zip="coverage-reports-${{inputs.woking-directory}}-${{inputs.ci-mode}}.zip"
+        zip -r $coverage_reports_zip ${{inputs.woking-directory}}/coverage-reports
       shell: bash    
+
+    - name: Upload coverage data
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-reports
+        path: $coverage_reports_zip  
     
     # Example of using the output in a subsequent step
     - name: Use Script Output
