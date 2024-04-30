@@ -49,12 +49,8 @@ runs:
         echo "Delay: ${{ inputs.delay }}"
         echo "CI Mode: ${{ inputs.ci-mode }}"
       shell: bash
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{inputs.repository}}
-        ref: ${{ inputs.branch }}
-    - run: |
+    - name: Check current directory
+      run: |
         pwd
         ls
       shell: sh
