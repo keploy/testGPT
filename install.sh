@@ -36,12 +36,15 @@ check_test_status() {
 }
 
 
-# Print the current working directory of the application
-echo working directory "${WORKDIR}"
-ls
-echo "Current directory: $(pwd)"
+# Go to the working directory
+echo "Working directory: ${WORKDIR}"
 cd "${WORKDIR}"
-ls 
+
+# Make a directory to dump coverage
+mkdir coverage-reports
+
+# Set GOCOVERDIR to the coverage directory
+export GOCOVERDIR="./coverage-reports"
 
 #### Recording Phase of test-bench ####
 pre_rec="${KEPLOY_PATH}"
@@ -51,6 +54,13 @@ delete_if_exists "$pre_rec/keploy/reports"
 
 # Get all directories except the 'reports' directory
 test_sets=$(find "$pre_rec/keploy/" -mindepth 1 -maxdepth 1 -type d ! -name "reports" -exec basename {} \;)
+
+# Check the exit status of the find command
+if [ $? -ne 0 ]; then
+    echo "Error: No such file or directory."
+    echo "::set-output name=script_output::failure"
+    exit 1
+fi
 
 # Count the number of directories found
 num_test_sets=$(echo "$test_sets" | wc -l)
@@ -67,8 +77,10 @@ for dir in $test_sets; do
     echo "Recording and replaying for (test-set): $dir"
     #CI_MODE (0, recordHosted,testBuild) , (1, recordBuild, testHosted)
     if [ "$CI_MODE" -eq 0 ]; then
+        echo "Latest version of keploy is being used for recording, Build version of keploy is being used for testing" 
         sudo -E env PATH=$PATH keployH record -c "sudo -E env PATH=$PATH keployB test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
     else
+        echo "Build version of keploy is being used for recording, Latest version of keploy is being used for testing" 
         sudo -E env PATH=$PATH keployB record -c "sudo -E env PATH=$PATH keployH test -c '${COMMAND}' --proxyPort 56789 --dnsPort 46789  --delay=${DELAY} --testsets $dir --configPath '${CONFIG_PATH}' --path '$pre_rec' --enableTesting --generateGithubActions=false" --path "./test-bench/" --proxyPort=36789 --dnsPort 26789 --configPath "${CONFIG_PATH}" --enableTesting --generateGithubActions=false 
     fi
     # Wait for 1 second before new test-set
@@ -87,6 +99,8 @@ if [ "$overallStatus" -eq 0 ]; then
     exit 1
 fi
 
+echo "Successfully recorded tests and mocks via test-bench 🎉"
+
 #### Testing Phase of test-bench ####
 test_bench_rec="./test-bench"
 
@@ -99,7 +113,7 @@ if [ $exit_status -ne 0 ]; then
     exit 1
 fi
 
-echo "Tests are asserted successfully."
+echo "Tests are asserted successfully 🎉"
 
 
 ## Mock assertion preparation
@@ -112,7 +126,7 @@ if [ $exit_status -ne 0 ]; then
     exit 1
 fi
 
-echo "Mock assertion prepared successfully."
+echo "Mock assertion prepared successfully 🎉"
 
 ## Now run the tests both for pre-recorded test cases and test-bench recorded test cases to compare the mocks (mock assertion)
 delete_if_exists "$pre_rec/keploy/reports"
@@ -129,11 +143,11 @@ if [ "$overallStatus" -eq 0 ]; then
     echo "::set-output name=script_output::failure"
     exit 1
 fi
-echo "New mocks are consistent with the pre-recorded mocks."
+echo "New mocks are consistent with the pre-recorded mocks 🎉"
 
 
 ## Run tests for test-bench-recorded test cases
-sudo -E env PATH=$PATH keployH test -c "./ginApp" --delay ${DELAY} --path "$test_bench_rec" --generateGithubActions=false
+sudo -E env PATH=$PATH keployH test -c "${COMMAND}" --delay ${DELAY} --path "$test_bench_rec" --generateGithubActions=false
 
 sleep 2
 
@@ -145,12 +159,12 @@ if [ "$overallStatus" -eq 0 ]; then
     echo "::set-output name=script_output::failure"
     exit 1
 fi
-echo "Old mocks are consistent with the test-bench-recorded mocks."
+echo "Old mocks are consistent with the test-bench-recorded mocks 🎉"
 
 # Delete the tests and mocks generated via test-bench.
 delete_if_exists "$test_bench_rec"
 
-echo "Tests and mocks are consistent for this application."
+echo "Tests and mocks are consistent for this application 🎉"
 echo "::set-output name=script_output::success"
 
 exit 0
