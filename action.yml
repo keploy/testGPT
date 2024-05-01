@@ -68,9 +68,10 @@ runs:
         workdir="${workdir%-}"
         
         coverage="coverage-reports-${workdir}-${{ inputs.ci-mode }}"
+        mv ${{ inputs.working-directory }}/coverage-reports ./$coverage
         echo "coverage=$coverage"
         echo "::set-output name=coverage_name::$coverage"
-        zip -r ${coverage}.zip ${{ inputs.working-directory }}/coverage-reports
+        zip -r ${coverage}.zip $coverage
       shell: bash
 
     - name: Upload coverage zip as artifact
