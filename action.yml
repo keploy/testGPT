@@ -76,7 +76,7 @@ runs:
 
     - name: Upload coverage zip as artifact
       if: steps.coverage-zip.outputs.coverage_name != ''
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.coverage-zip.outputs.coverage_name }}
         path: ${{ steps.coverage-zip.outputs.coverage_name }}.zip
