@@ -36,7 +36,7 @@ runs:
       shell: bash
     - name: Grant permissions
       run: chmod +x ${GITHUB_ACTION_PATH}/install.sh
-      shell: sh
+      shell: bash
     - id: keploy-test-report
       name: Run Script
       run:  |
@@ -88,4 +88,3 @@ runs:
             repo: context.repo.repo,
             body: process.env.KEPLOY_REPORT
           })
-      shell: bash
