@@ -40,7 +40,6 @@ runs:
     - id: keploy-test-report
       name: Run Script
       run:  |
-        ${GITHUB_ACTION_PATH}/install.sh
         ${GITHUB_ACTION_PATH}/install.sh > ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
         cat ${GITHUB_WORKSPACE}/${WORKDIR}/report.txt
 
