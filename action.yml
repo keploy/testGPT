@@ -1,8 +1,8 @@
-name: 'Keploy TestRun Report'
-description: "An action to run e2e test run"
-author: Alphasians
+name: 'Keploy TestGPT'
+description: "TestGPT is a GitHub Action designed to execute Keploy test cases and generate detailed test reports."
+author: Sonichigo
 branding:
-  icon: 'refresh-cw'
+  icon: 'aperture'
   color: 'orange'
 
 inputs:
